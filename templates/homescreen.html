@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Summarize</title>
+    <link type="css" rel="stylesheet" href="{{ url_for('static',filename='styles.css') }}">
+    <style>
+        body{
+            margin: 2%;
+            text-align: center;
+            background-color: #604095;
+        }
+        button,input[type="file"]::-webkit-file-upload-button{
+            color: white;
+            background-color: purple;
+            border-radius: 20px;
+            padding: 10px 20px;
+        }
+        button:hover,input[type="file"]::-webkit-file-upload-button:hover{
+            background-color: #5A005A;
+        }
+        .results{
+            background-color: black;
+            height: 200px;
+            margin: 20%;
+            border-radius: 5%;
+        }
+    </style>
+</head>
+<body>
+    <h1>AI Summarize</h1>
+    <h3>Upload a PDF or .txt file below to receive a brief summary of it</h3>
+    <h5>created by Jacinto Gomez</h5>
+    <form action="/process" method="post" enctype="multipart/form-data">
+        <input type="file" name="file">
+        <button type="submit">Upload</button>
+    </form>
+    <div class="results">
+        <div id="result"></div>
+    </div>
+    <script src="processform.js"></script>
+</body>
+</html>
