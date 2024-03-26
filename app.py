@@ -42,13 +42,15 @@ def process():
         elif filename.endswith('.txt'):
             #summary=langtxt(filename)
             with open(filename,'r') as file:
-                text=file.read()
+                #text=file.read()
+                text=''.join(line for line in file)
             summary=text.upper()
         else:
             print('Not supported')
             summary='File type not supported'
     print('summary is ',summary)
-    return summary
+    print('original is ',text)
+    return [summary,text]
 
 def langpdf(file):
     llm=ChatOpenAI()

@@ -26,7 +26,7 @@
             color: white;
             height: 1000px;
             width: 900px;
-            margin: 100px auto;
+            margin: 0 auto;
             padding-top: 50px;
             padding-left: 50px;
             border-radius: 5%;
@@ -34,18 +34,53 @@
             text-align: left;
             resize: vertical;
         }
+        .left{
+            width: 50%;
+            float: left;
+            display: inline-block;
+            text-align: left;
+        }
+        .right{
+            width: 50%;
+            float: left;
+            display: inline-block;
+            text-align: left;
+        }
+        .outerlabel{
+            display: flex;
+            justify-content: space-around;
+            width: 900px;
+            margin: 0 auto;
+            padding-top: 40px;
+        }
+        .halflabel{
+            flex: 1;
+            text-align: center;
+            font-size: 40px;
+            margin: 10px 10px
+        }
+
     </style>
 </head>
 <body>
     <h1>The Big-O Calculator</h1>
     <h3>Upload a PDF/txt file with C++ code to receive an analysis of the runtime</h3>
-    <h5>created by Jacinto Gomez</h5>
+    <h4>created by Jacinto Gomez</h4>
     <form action="/process" method="post" enctype="multipart/form-data">
         <input type="file" name="file">
         <button type="submit">Upload</button>
     </form>
+    <div class="outerlabel">
+        <div class="halflabel">Input</div>
+        <div class="halflabel">Answer</div>
+    </div>
     <div class="results">
-        <div id="result"></div>
+        <div class="left">
+            <div id="code"><pre></pre></div>
+        </div>
+        <div class="right">
+            <div id="result"></div>
+        </div>
     </div>
     <script>
         document.querySelector('form').addEventListener('submit',async function(e){
@@ -55,8 +90,9 @@
                 method:'POST',
                 body:formdata
             });
-            const result=await response.text();
+            const [result,code]=await response.json();
             document.getElementById('result').innerText=result;
+            document.getElementById('code').querySelector('pre').innerText=code;
         });
     </script>
 </body>
