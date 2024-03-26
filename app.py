@@ -1,4 +1,4 @@
-from flask import Flask,render_template,request,jsonify
+from flask import Flask,render_template,request
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
@@ -11,6 +11,7 @@ from langchain_community.document_loaders import TextLoader
 from langchain_community.document_loaders import PyPDFLoader
 
 import textwrap
+import PyPDF2
 import os
 load_dotenv()
 openai_api_key = os.getenv("OPENAI_API_KEY")
@@ -34,11 +35,18 @@ def process():
     if file.filename=='':
         return 'No selected file'
     summary=''
+    text=''
     if file:
         filename=file.filename
         file.save(os.path.join('uploads',filename))
         if filename.endswith('.pdf'):
             summary=langpdf(filename)
+            with open(filename,'rb') as file:
+                reader=PyPDF2.PdfFileReader(file)
+                numpage=reader.numPages
+                for n in range(numpage):
+                    page=reader.getPage(n)
+                    text+=page.extractText()
         elif filename.endswith('.txt'):
             summary=langtxt(filename)
             with open(filename,'r') as file:
@@ -53,7 +61,7 @@ def process():
 
 def langpdf(file):
     llm=ChatOpenAI()
-    prompt=ChatPromptTemplate.from_template("""Answer the following request based only on the provided context:
+    prompt=ChatPromptTemplate.from_template("""Answer the following question about the C++ code contents of the provided file:
     
     <context>
     {context}
@@ -65,13 +73,14 @@ def langpdf(file):
     pages=loader.load_and_split()
 
     embeddings=OpenAIEmbeddings()
+    #print('ebmeddings ',embeddings,len(embeddings))
     tsplitter=RecursiveCharacterTextSplitter()
     documents=tsplitter.split_documents(pages)
     vec=FAISS.from_documents(documents,embeddings)
 
     retriever=vec.as_retriever()
     retrievalchain=create_retrieval_chain(retriever,documentchain)
-    question='Please summarize the given file in 5 sentences or less'
+    question='Please give a big-O analysis of each strip of C++ code in the following file, for each one noting how each for/while loop contribute to the simplified final answer. If it does not compile as C++ code or contains no C++ code at all respond that the input was invalid'
     response=retrievalchain.invoke({'input':question})
     print(question)
     cleanans=response['answer']
@@ -98,7 +107,7 @@ def langtxt(file):
 
     retriever=vec.as_retriever()
     retrievalchain=create_retrieval_chain(retriever,documentchain)
-    question='Please give a big-O analysis of the given C++ code, noting how each for/while loop contribute to the simplified final answer. If it does not compile as C++ code respond that the input was invalid'
+    question='Please give a big-O analysis of the given C++ code, noting how each for/while loop contribute to the simplified final answer. If it does not compile as C++ code, or no code is present at all, please respond that the input was invalid'
     response=retrievalchain.invoke({'input':question})
     print(question)
     cleanans=response['answer']
