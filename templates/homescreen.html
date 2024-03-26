@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Summarize</title>
     <link type="css" rel="stylesheet" href="{{ url_for('static',filename='styles.css') }}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <style>
         body{
             margin: 2%;
@@ -37,8 +38,8 @@
         <button type="submit">Upload</button>
     </form>
     <div class="results">
-        <div id="result"></div>
+        <div id="summary"></div>
     </div>
-    <script src="processform.js"></script>
+    <script src="processajax.js"></script>
 </body>
 </html>

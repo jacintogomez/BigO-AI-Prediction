@@ -1,4 +1,4 @@
-from flask import Flask,render_template,request
+from flask import Flask,render_template,request,jsonify
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
@@ -36,12 +36,15 @@ def process():
         if filename.endswith('.pdf'):
             summary=langpdf(filename)
         elif filename.endswith('.txt'):
-            summary=langtxt(filename)
+            #summary=langtxt(filename)
+            with open(filename,'r') as file:
+                text=file.read()
+            summary=text.upper()
         else:
             print('Not supported')
             summary='File type not supported'
     print('summary is ',summary)
-    return render_template('results.html',summary=summary)
+    return jsonify({'summary':summary})
 
 def langpdf(file):
     llm=ChatOpenAI()
