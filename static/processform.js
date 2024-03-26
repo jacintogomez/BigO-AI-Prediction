@@ -1,7 +1,7 @@
 document.querySelector('form').addEventListener('submit',async function(e){
     e.preventDefault();
     const formdata=new FormData(this);
-    const response=await fetch('/process',{
+    const response=await fetch('/',{
         method:'POST',
         body:formdata
     });

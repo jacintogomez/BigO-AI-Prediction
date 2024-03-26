@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Summarize</title>
-    <link type="css" rel="stylesheet" href="{{ url_for('static',filename='styles.css') }}">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <title>Runtime Analysis</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='img/theta.jpg') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles.css') }}">
     <style>
         body{
             margin: 2%;
@@ -23,23 +23,41 @@
         }
         .results{
             background-color: black;
-            height: 200px;
-            margin: 20%;
+            color: white;
+            height: 1000px;
+            width: 900px;
+            margin: 100px auto;
+            padding-top: 50px;
+            padding-left: 50px;
             border-radius: 5%;
+            overflow-y: auto;
+            text-align: left;
+            resize: vertical;
         }
     </style>
 </head>
 <body>
-    <h1>AI Summarize</h1>
-    <h3>Upload a PDF or .txt file below to receive a brief summary of it</h3>
+    <h1>The Big-O Calculator</h1>
+    <h3>Upload a PDF/txt file with C++ code to receive an analysis of the runtime</h3>
     <h5>created by Jacinto Gomez</h5>
     <form action="/process" method="post" enctype="multipart/form-data">
         <input type="file" name="file">
         <button type="submit">Upload</button>
     </form>
     <div class="results">
-        <div id="summary"></div>
+        <div id="result"></div>
     </div>
-    <script src="processajax.js"></script>
+    <script>
+        document.querySelector('form').addEventListener('submit',async function(e){
+            e.preventDefault();
+            const formdata=new FormData(this);
+            const response=await fetch('/process',{
+                method:'POST',
+                body:formdata
+            });
+            const result=await response.text();
+            document.getElementById('result').innerText=result;
+        });
+    </script>
 </body>
 </html>

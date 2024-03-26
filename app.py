@@ -22,6 +22,10 @@ app = Flask(__name__)
 def index():
     return render_template('homescreen.html')
 
+@app.route('/home',methods=['POST'])
+def home():
+    return render_template('homescreen.html')
+
 @app.route('/process',methods=['POST'])
 def process():
     if 'file' not in request.files:
@@ -44,7 +48,7 @@ def process():
             print('Not supported')
             summary='File type not supported'
     print('summary is ',summary)
-    return jsonify({'summary':summary})
+    return summary
 
 def langpdf(file):
     llm=ChatOpenAI()
