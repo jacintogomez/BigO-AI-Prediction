@@ -79,7 +79,7 @@ def langpdf(file):
 
 def langtxt(file):
     llm=ChatOpenAI()
-    prompt=ChatPromptTemplate.from_template("""Answer the following request based only on the provided context:
+    prompt=ChatPromptTemplate.from_template("""Answer the following question about the provided context:
     
     <context>
     {context}
@@ -97,7 +97,7 @@ def langtxt(file):
 
     retriever=vec.as_retriever()
     retrievalchain=create_retrieval_chain(retriever,documentchain)
-    question='Please summarize the given file in 5 sentences or less'
+    question='Please give a big-O analysis of the given C++ code, noting how each for/while loop contribute to the simplified final answer. If it does not compile as C++ code respond that the input was invalid'
     response=retrievalchain.invoke({'input':question})
     print(question)
     cleanans=response['answer']
