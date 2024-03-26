@@ -42,11 +42,11 @@ def process():
         if filename.endswith('.pdf'):
             summary=langpdf(filename)
             with open(filename,'rb') as file:
-                reader=PyPDF2.PdfFileReader(file)
-                numpage=reader.numPages
+                reader=PyPDF2.PdfReader(file)
+                numpage=len(reader.pages)
                 for n in range(numpage):
-                    page=reader.getPage(n)
-                    text+=page.extractText()
+                    page=reader.pages[n]
+                    text+=page.extract_text()
         elif filename.endswith('.txt'):
             summary=langtxt(filename)
             with open(filename,'r') as file:
@@ -80,7 +80,7 @@ def langpdf(file):
 
     retriever=vec.as_retriever()
     retrievalchain=create_retrieval_chain(retriever,documentchain)
-    question='Please give a big-O analysis of each strip of C++ code in the following file, for each one noting how each for/while loop contribute to the simplified final answer. If it does not compile as C++ code or contains no C++ code at all respond that the input was invalid'
+    question='Please give a big-O analysis of each function of C++ code in the following file, ignore other text. For each of those functions please note how each for/while loop contribute to the simplified final answer. If a segment is not C++ please ignore it, and if the file contains no C++ code at all respond that the input was invalid'
     response=retrievalchain.invoke({'input':question})
     print(question)
     cleanans=response['answer']
