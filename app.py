@@ -40,11 +40,10 @@ def process():
         if filename.endswith('.pdf'):
             summary=langpdf(filename)
         elif filename.endswith('.txt'):
-            #summary=langtxt(filename)
+            summary=langtxt(filename)
             with open(filename,'r') as file:
                 #text=file.read()
                 text=''.join(line for line in file)
-            summary=text.upper()
         else:
             print('Not supported')
             summary='File type not supported'
