@@ -41,12 +41,17 @@ def process():
         file.save(os.path.join('uploads',filename))
         if filename.endswith('.pdf'):
             summary=langpdf(filename)
+            uncleaned=''
             with open(filename,'rb') as file:
                 reader=PyPDF2.PdfReader(file)
                 numpage=len(reader.pages)
                 for n in range(numpage):
                     page=reader.pages[n]
-                    text+=page.extract_text()
+                    uncleaned+=page.extract_text()
+            print('uncleaned is ',uncleaned)
+            with open('dump.txt','w') as wfile:
+                wfile.write(uncleaned)
+            text=cleancpp('dump.txt')
         elif filename.endswith('.txt'):
             summary=langtxt(filename)
             with open(filename,'r') as file:
@@ -58,6 +63,33 @@ def process():
     print('summary is ',summary)
     print('original is ',text)
     return [summary,text]
+
+def cleancpp(file):
+    llm=ChatOpenAI()
+    prompt=ChatPromptTemplate.from_template("""Answer the following question about the provided context:
+    
+    <context>
+    {context}
+    </context>
+    
+    Question: {input}""")
+    documentchain=create_stuff_documents_chain(llm,prompt)
+    loader=TextLoader(os.path.join('uploads',file))
+    docs=loader.load()
+
+    embeddings=OpenAIEmbeddings()
+    tsplitter=RecursiveCharacterTextSplitter()
+    documents=tsplitter.split_documents(docs)
+    vec=FAISS.from_documents(documents,embeddings)
+
+    retriever=vec.as_retriever()
+    retrievalchain=create_retrieval_chain(retriever,documentchain)
+    question='Please eliminate everything from the given text that is not a C++ function, and return ONLY the remaining text with the same formatting, including preceding whitespace in the function lines. Please do not add any comments in your response either, just the return the text'
+    response=retrievalchain.invoke({'input':question})
+    print(question)
+    cleanans=response['answer']
+    print(consoleformat(cleanans))
+    return cleanans
 
 def langpdf(file):
     llm=ChatOpenAI()

@@ -7,10 +7,23 @@
     <link rel="shortcut icon" href="{{ url_for('static', filename='img/theta.ico') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles.css') }}">
     <style>
+        #loading-results{
+            border: 16px solid black;
+            border-top: 16px solid white;
+            border-radius: 50%;
+            height: 120px;
+            width: 120px;
+            animation: spin 2s linear infinite;
+        }
+        @keyframes spin{
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
         body{
             margin: 2%;
             text-align: center;
-            background-color: #7C53C1;
+            {#background-color: #7C53C1;#}
+            background: radial-gradient(circle,white,#7C53C1);
         }
         button,input[type="file"]::-webkit-file-upload-button{
             color: white;
@@ -70,6 +83,8 @@
         <input type="file" name="file">
         <button type="submit">Upload</button>
     </form>
+    <div id="loading-results" style="display:none"></div>
+    <div id="error-msg"></div>
     <div class="outerlabel">
         <div class="halflabel">Input</div>
         <div class="halflabel">Answer</div>
@@ -85,12 +100,14 @@
     <script>
         document.querySelector('form').addEventListener('submit',async function(e){
             e.preventDefault();
+            document.getElementById('loading-results').style.display='block';
             const formdata=new FormData(this);
             const response=await fetch('/process',{
                 method:'POST',
                 body:formdata
             });
             const [result,code]=await response.json();
+            document.getElementById('loading-results').style.display='none';
             document.getElementById('result').innerText=result;
             document.getElementById('code').querySelector('pre').innerText=code;
         });
