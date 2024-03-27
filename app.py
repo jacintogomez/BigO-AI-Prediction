@@ -9,6 +9,7 @@ from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.chains import create_retrieval_chain
 from langchain_community.document_loaders import TextLoader
 from langchain_community.document_loaders import PyPDFLoader
+from pypdf import PdfReader
 
 import textwrap
 import PyPDF2
@@ -45,11 +46,13 @@ def process():
             summary=langpdf(filename)
             uncleaned=''
             with open(os.path.join('uploads',filename),'rb') as file:
-                reader=PyPDF2.PdfReader(file)
+                reader=PdfReader(file)
                 numpage=len(reader.pages)
-                for n in range(numpage):
-                    page=reader.pages[n]
-                    uncleaned+=page.extract_text()
+                for page in reader.pages:
+                    uncleaned+=page.extract_text(extraction_mode='layout')
+                # for n in range(numpage):
+                #     page=reader.pages[n]
+                #     uncleaned+=page.extract_text(extraction_mode="layout")
             print('uncleaned is ',uncleaned)
             with open('dump.txt','w') as wfile:
                 wfile.write(uncleaned)
@@ -86,7 +89,7 @@ def cleancpp(file):
 
     retriever=vec.as_retriever()
     retrievalchain=create_retrieval_chain(retriever,documentchain)
-    question='Please eliminate everything from the given text that is not a C++ function, and return ONLY the C++ functions with the same formatting, including preceding whitespace in the function lines. Please do not add any comments in your response either, just the return the code'
+    question='Please eliminate everything from the given text that is not a C++ function. For those C++ functions please add preceding whitespace (for indentations) and newline characters to the output string so that the C++ code is readable to a human. Please do not add any comments in your response either, just the return the code'
     response=retrievalchain.invoke({'input':question})
     print(question)
     cleanans=response['answer']
