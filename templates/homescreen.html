@@ -8,12 +8,14 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles.css') }}">
     <style>
         #loading-results{
-            border: 16px solid black;
-            border-top: 16px solid white;
+            border: 10px solid black;
+            border-top: 10px solid white;
             border-radius: 50%;
-            height: 120px;
-            width: 120px;
-            animation: spin 2s linear infinite;
+            height: 30px;
+            width: 30px;
+            animation: spin 1s linear infinite;
+            position: absolute;
+            flex: 1;
         }
         @keyframes spin{
             0% { transform: rotate(0deg); }
@@ -65,7 +67,7 @@
             justify-content: space-around;
             width: 900px;
             margin: 0 auto;
-            padding-top: 40px;
+            padding-top: 20px;
         }
         .halflabel{
             flex: 1;
@@ -83,7 +85,10 @@
         <input type="file" name="file">
         <button type="submit">Upload</button>
     </form>
-    <div id="loading-results" style="display:none"></div>
+    <div class="outerlabel">
+        <div id="loading-results" style="display:none"></div>
+    </div>
+
     <div id="error-msg"></div>
     <div class="outerlabel">
         <div class="halflabel">Input</div>
@@ -109,7 +114,7 @@
             const [result,code]=await response.json();
             document.getElementById('loading-results').style.display='none';
             document.getElementById('result').innerText=result;
-            document.getElementById('code').querySelector('pre').innerText=code;
+            document.getElementById('code').innerText=code;
         });
     </script>
 </body>

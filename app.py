@@ -39,10 +39,12 @@ def process():
     if file:
         filename=file.filename
         file.save(os.path.join('uploads',filename))
+        print('filename ',filename)
         if filename.endswith('.pdf'):
+            print('this is a pdf')
             summary=langpdf(filename)
             uncleaned=''
-            with open(filename,'rb') as file:
+            with open(os.path.join('uploads',filename),'rb') as file:
                 reader=PyPDF2.PdfReader(file)
                 numpage=len(reader.pages)
                 for n in range(numpage):
@@ -54,7 +56,7 @@ def process():
             text=cleancpp('dump.txt')
         elif filename.endswith('.txt'):
             summary=langtxt(filename)
-            with open(filename,'r') as file:
+            with open(os.path.join('uploads',filename),'r') as file:
                 #text=file.read()
                 text=''.join(line for line in file)
         else:
@@ -74,7 +76,7 @@ def cleancpp(file):
     
     Question: {input}""")
     documentchain=create_stuff_documents_chain(llm,prompt)
-    loader=TextLoader(os.path.join('uploads',file))
+    loader=TextLoader(file)
     docs=loader.load()
 
     embeddings=OpenAIEmbeddings()
@@ -84,7 +86,7 @@ def cleancpp(file):
 
     retriever=vec.as_retriever()
     retrievalchain=create_retrieval_chain(retriever,documentchain)
-    question='Please eliminate everything from the given text that is not a C++ function, and return ONLY the remaining text with the same formatting, including preceding whitespace in the function lines. Please do not add any comments in your response either, just the return the text'
+    question='Please eliminate everything from the given text that is not a C++ function, and return ONLY the C++ functions with the same formatting, including preceding whitespace in the function lines. Please do not add any comments in your response either, just the return the code'
     response=retrievalchain.invoke({'input':question})
     print(question)
     cleanans=response['answer']
