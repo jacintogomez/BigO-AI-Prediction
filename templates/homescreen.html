@@ -107,14 +107,22 @@
             e.preventDefault();
             document.getElementById('loading-results').style.display='block';
             const formdata=new FormData(this);
-            const response=await fetch('/process',{
-                method:'POST',
-                body:formdata
-            });
-            const [result,code]=await response.json();
-            document.getElementById('loading-results').style.display='none';
-            document.getElementById('result').innerText=result;
-            document.getElementById('code').innerText=code;
+            try{
+                const response=await fetch('/process',{
+                    method:'POST',
+                    body:formdata
+                });
+                if(!response.ok){
+                    throw new Error('Server error: '+response.status);
+                }
+                const [result,code]=await response.json();
+                document.getElementById('loading-results').style.display='none';
+                document.getElementById('result').innerText=result;
+                document.getElementById('code').innerText=code;
+            }catch(error){
+                document.getElementById('loading-results').style.display='none';
+                alert('Sorry, an error occurred: '+error.message);
+            }
         });
     </script>
 </body>
