@@ -11,3 +11,5 @@ An error handling feature exists where a browser alert message will pop up with 
 the loading bar spin indefinitely thinking it is working.
 
 Current problems: 1 page PDFs cause an indexing error in the backend
+
+Live at: https://bigocalculator-8da3a7585c6b.herokuapp.com/
