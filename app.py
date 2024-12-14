@@ -12,7 +12,6 @@ from langchain_community.document_loaders import PyPDFLoader
 from pypdf import PdfReader
 
 import textwrap
-import PyPDF2
 import os
 load_dotenv()
 openai_api_key = os.getenv("OPENAI_API_KEY")

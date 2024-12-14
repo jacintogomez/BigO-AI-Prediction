@@ -1,0 +1,7 @@
+*.log
+*.env
+venv/
+tests/
+idea/
+node_modules/
+__pycache__/
